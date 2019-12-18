@@ -5,6 +5,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+    tag_line = models.CharField(max_length=128, blank=True)
 
     def __str__(self):
         return self.user.username + ' profile'
