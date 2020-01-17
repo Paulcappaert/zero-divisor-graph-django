@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'user.apps.UserConfig',
     'company.apps.CompanyConfig',
+    'fish.apps.FishConfig',
 ]
 
 MIDDLEWARE = [
