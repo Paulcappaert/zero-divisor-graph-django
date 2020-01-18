@@ -1,0 +1,10 @@
+{% extends "home/base.html" %}
+{% block content %}
+    <h1>Fishing companies</h1>
+    {% for company in companies %}
+        <div class='content-section'>
+            <h2>{{company.name}}</h2>
+            <p>{{company.description}}</p>
+        </div>
+    {% endfor %}
+{% endblock content %}
