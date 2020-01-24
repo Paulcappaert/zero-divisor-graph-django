@@ -12,6 +12,9 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'home/main.css' %}">
 
+    <script src="{% static 'home/fabric.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
     {% if title %}
         <title>{{ title }}</title>
     {% endif %}
@@ -27,9 +30,6 @@
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
               <a class="nav-item nav-link" href="{% url 'home' %}">about</a>
-              <a class="nav-item nav-link" href="{% url 'companies' %}">fishing companies</a>
-              <a class="nav-item nav-link" href="#">trace fish</a>
-              <a class="nav-item nav-link" href="#">blockchain explorer</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">

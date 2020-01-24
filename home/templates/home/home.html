@@ -1,4 +1,105 @@
 {% extends "home/base.html" %}
 {% block content %}
-    <h1>Home Page</h1>
+    <h1>Graph</h1>
+    <canvas id="main" width="800" height="600"></canvas>
+    <input id="add" type="button" value="add vertex">
+    <input id="edge" type="checkbox" value="draw edges">
+
+    <script>
+    (function() {
+        var canvas = this.__canvas = new fabric.Canvas('main', { selection: false });
+        fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
+
+        var vertex1 = null;
+        var draw_edges = false;
+        var id = 1
+        var eid = 1
+
+        function makeLine(coords) {
+            return new fabric.Line(coords, {
+            fill: 'red',
+            stroke: 'red',
+            strokeWidth: 5,
+            selectable: false,
+            evented: false,
+            });
+        }
+
+        function makeCircle(left, top) {
+            var c = new fabric.Circle({
+            left: left,
+            top: top,
+            strokeWidth: 5,
+            radius: 18,
+            fill: '#fff',
+            stroke: '#666'
+            });
+            c.id = id
+            id += 1
+            c.hasControls = c.hasBorders = false;
+
+            c.lines1 = new Array()
+            c.lines2 = new Array()
+
+            c.on('selected', function(){
+                if(draw_edges){
+                    if(vertex1) {
+                        line = makeLine([
+                            vertex1.left, 
+                            vertex1.top, 
+                            c.left, 
+                            c.top
+                        ]);
+                        vertex1.lines1.push(line)
+                        c.lines2.push(line)
+                        canvas.add(line)
+
+                        $("#g" + (eid - 1)).after(
+                            '<input type=\"text\" id=\"g' + 
+                            eid + 
+                            '\" value=\"' +
+                            vertex1.id + "," + c.id + 
+                            '\" hidden>'
+                            )
+                        eid += 1
+                        vertex1 = null
+                    } else {
+                        vertex1 = c;
+                    }
+                }
+            });
+
+            return c;
+        }
+
+        canvas.on('object:moving', function(e){
+            var p = e.target
+            for(i = 0; i < p.lines1.length; i++) {
+                p.lines1[i].set({'x1': p.left, 'y1': p.top})
+
+            }
+            for(i = 0; i < p.lines2.length; i++) {
+                p.lines2[i].set({'x2': p.left, 'y2': p.top})
+            }        
+            canvas.renderAll()           
+        });
+
+
+
+        $("#add").click(function(){
+            canvas.add(makeCircle(100, 100))
+        })
+
+        $("#edge").click(function(){
+            draw_edges = draw_edges ^ true
+            vertex1 = null
+        })
+
+    })();
+    </script>
+
+    <form action="GET">
+        <input type="text" name="" id="g0" hidden>
+        <input type="submit" value="test graph" class="btn btn-submit">
+    </form>
 {% endblock content %}
