@@ -1,6 +1,9 @@
 {% extends "home/base.html" %}
 {% block content %}
     <h1>Graph</h1>
+    {% if semigroups %}
+        <p>Found {{semigroups}} semigroups</p>
+    {% endif %}
     <canvas id="main" width="800" height="600"></canvas>
     <input id="add" type="button" value="add vertex">
     <input id="edge" type="checkbox" value="draw edges">
@@ -55,10 +58,12 @@
                         canvas.add(line)
 
                         $("#g" + (eid - 1)).after(
-                            '<input type=\"text\" id=\"g' + 
+                            '<input type=\"text\" name=\"g' + 
                             eid + 
+                            '\" id=\"g' +
+                            eid +
                             '\" value=\"' +
-                            vertex1.id + "," + c.id + 
+                            vertex1.id + "e" + c.id + 
                             '\" hidden>'
                             )
                         eid += 1
@@ -98,8 +103,8 @@
     })();
     </script>
 
-    <form action="GET">
-        <input type="text" name="" id="g0" hidden>
+    <form class="content-section" method="GET">
+        <input type="text" name="g0" id="g0" value="True" hidden>
         <input type="submit" value="test graph" class="btn btn-submit">
     </form>
 {% endblock content %}
