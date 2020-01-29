@@ -43,8 +43,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'home.apps.HomeConfig',
     'user.apps.UserConfig',
-    'company.apps.CompanyConfig',
-    'fish.apps.FishConfig',
 ]
 
 MIDDLEWARE = [
