@@ -25,5 +25,4 @@ urlpatterns = [
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),
     path('', include('home.urls')),
-    path('company/', include('company.urls')),
 ]

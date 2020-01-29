@@ -18,6 +18,9 @@
         var id = 1
         var eid = 1
 
+        var start_x = 50
+        var start_y = 50
+
         function makeLine(coords) {
             return new fabric.Line(coords, {
             fill: 'red',
@@ -46,6 +49,8 @@
 
             c.on('selected', function(){
                 if(draw_edges){
+                    c.fill = 'black'
+                    canvas.renderAll()
                     if(vertex1) {
                         line = makeLine([
                             vertex1.left, 
@@ -72,7 +77,12 @@
                         vertex1 = c;
                     }
                 }
-            });
+            })
+
+            c.on('deselected', function(){
+                c.fill = 'white'
+                canvas.renderAll()
+            })
 
             return c;
         }
@@ -92,7 +102,11 @@
 
 
         $("#add").click(function(){
-            canvas.add(makeCircle(100, 100))
+            canvas.add(makeCircle(start_x, 100))
+            start_x += 100
+            if(start_x == 700) {
+                start_x = 50
+            }
         })
 
         $("#edge").click(function(){
