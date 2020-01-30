@@ -10,16 +10,15 @@
 
     <script>
     (function() {
-        var canvas = this.__canvas = new fabric.Canvas('main', { selection: false });
-        fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
 
+        var canvas = this.__canvas = new fabric.Canvas('main', { selection: false })
+        fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
+        
+        var graph = {'verts': [], 'edges': []}
+        var id = 0
+        var eid = 0
         var vertex1 = null;
         var draw_edges = false;
-        var id = 1
-        var eid = 1
-
-        var start_x = 50
-        var start_y = 50
 
         function makeLine(coords) {
             return new fabric.Line(coords, {
@@ -41,6 +40,12 @@
             stroke: '#666'
             });
             c.id = id
+
+            graph.verts[id] = {
+                'top': top,
+                'left': left
+            }
+
             id += 1
             c.hasControls = c.hasBorders = false;
 
@@ -49,14 +54,12 @@
 
             c.on('selected', function(){
                 if(draw_edges){
-                    c.fill = 'black'
-                    canvas.renderAll()
                     if(vertex1) {
                         line = makeLine([
                             vertex1.left, 
                             vertex1.top, 
                             c.left, 
-                            c.top
+                            c.top,
                         ]);
                         vertex1.lines1.push(line)
                         c.lines2.push(line)
@@ -71,6 +74,9 @@
                             vertex1.id + "e" + c.id + 
                             '\" hidden>'
                             )
+                        
+                        graph.edges[eid] = {'v1': vertex1.id, 'v2': c.id}
+                        sessionStorage.setItem('graph', JSON.stringify(graph))
                         eid += 1
                         vertex1 = null
                     } else {
@@ -87,6 +93,40 @@
             return c;
         }
 
+        if(sessionStorage.getItem('graph')) {
+            
+            graph = JSON.parse(sessionStorage.getItem('graph'))
+            console.log(JSON.stringify(graph))
+
+            var verts = Array()
+
+            for(i in graph.verts) {
+                c = makeCircle(graph.verts[i].left, graph.verts[i].top)
+                canvas.add(c)
+                verts.push(c)
+            }
+
+            for(i in graph.edges) {
+                var v1 = verts[graph.edges[i].v1]
+                var v2 = verts[graph.edges[i].v2]
+                
+                line = makeLine([
+                    v1.left, 
+                    v1.top,
+                    v2.left,
+                    v2.top
+                ])
+
+                v1.lines1.push(line)
+                v2.lines2.push(line)
+                canvas.add(line)
+            }
+            canvas.renderAll()
+        } 
+
+        var start_x = 50
+        var start_y = 50
+
         canvas.on('object:moving', function(e){
             var p = e.target
             for(i = 0; i < p.lines1.length; i++) {
@@ -96,7 +136,11 @@
             for(i = 0; i < p.lines2.length; i++) {
                 p.lines2[i].set({'x2': p.left, 'y2': p.top})
             }        
-            canvas.renderAll()           
+            canvas.renderAll()
+
+            graph.verts[p.id].top = p.top
+            graph.verts[p.id].left = p.left  
+            sessionStorage.setItem('graph', JSON.stringify(graph))         
         });
 
 
@@ -117,8 +161,9 @@
     })();
     </script>
 
-    <form class="content-section" method="GET">
+    <form class="content-section" method="POST">
         <input type="text" name="g0" id="g0" value="True" hidden>
         <input type="submit" value="test graph" class="btn btn-submit">
+        {% csrf_token %}
     </form>
 {% endblock content %}
