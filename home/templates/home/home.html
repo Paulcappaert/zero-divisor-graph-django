@@ -6,7 +6,9 @@
     {% endif %}
     <canvas id="main" width="800" height="600"></canvas>
     <input id="add" type="button" value="add vertex">
-    <input id="edge" type="checkbox" value="draw edges">
+    <input id="clear" type="button" value="clear">
+    <label for="edge">Add Vertices</label>
+    <input id="edge" type="checkbox">
 
     <script>
     (function() {
@@ -35,7 +37,7 @@
             left: left,
             top: top,
             strokeWidth: 5,
-            radius: 18,
+            radius: 22,
             fill: '#fff',
             stroke: '#666'
             });
@@ -74,13 +76,16 @@
                             vertex1.id + "e" + c.id + 
                             '\" hidden>'
                             )
-                        
+
                         graph.edges[eid] = {'v1': vertex1.id, 'v2': c.id}
                         sessionStorage.setItem('graph', JSON.stringify(graph))
+                        $("#graph").val(JSON.stringify(graph))
                         eid += 1
                         vertex1 = null
                     } else {
                         vertex1 = c;
+                        vertex1.fill = 'black'
+                        canvas.renderAll()
                     }
                 }
             })
@@ -121,6 +126,7 @@
                 v2.lines2.push(line)
                 canvas.add(line)
             }
+            eid = graph.edges.length
             canvas.renderAll()
         } 
 
@@ -140,7 +146,8 @@
 
             graph.verts[p.id].top = p.top
             graph.verts[p.id].left = p.left  
-            sessionStorage.setItem('graph', JSON.stringify(graph))         
+            sessionStorage.setItem('graph', JSON.stringify(graph))
+            $("#graph").val(JSON.stringify(graph))         
         });
 
 
@@ -148,7 +155,7 @@
         $("#add").click(function(){
             canvas.add(makeCircle(start_x, 100))
             start_x += 100
-            if(start_x == 700) {
+            if(start_x == 750) {
                 start_x = 50
             }
         })
@@ -158,11 +165,18 @@
             vertex1 = null
         })
 
+        $("#clear").click(function(){
+            sessionStorage.setItem('graph', '')
+            $("#graph").val('')
+            canvas.clear()
+            canvas.renderAll()
+        })
+
     })();
     </script>
 
     <form class="content-section" method="POST">
-        <input type="text" name="g0" id="g0" value="True" hidden>
+        <input type="text" name="graph" id="graph" value="" hidden>
         <input type="submit" value="test graph" class="btn btn-submit">
         {% csrf_token %}
     </form>

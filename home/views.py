@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from zdg.zdg import ZeroDivisorGraph
+import json
 
-def home(request):
-    if(request.GET.get('g0', False)):
-        i = 1
+def semigroup_view(request):
+    if (raw_graph := request.POST.get('graph', False)):
+        print(raw_graph)
+        raw_graph = json.loads(raw_graph)
         edges = []
-        while(edge := request.GET.get('g' + str(i), False)):
-            a, b = map(int, edge.split('e'))
-            edges.append((a, b))
-            i += 1
+        for edge in raw_graph['edges']:
+            edges.append((edge['v1'], edge['v2']))
         graph = ZeroDivisorGraph(*edges)
         semigroups = graph.semigroups()
         if semigroups:
@@ -19,6 +19,6 @@ def home(request):
             context = {
                 'semigroups': '0',
             }
-        return render(request, 'home/home.html', context)
+        return render(request, 'home/home.html', context)    
     else:
-        return render(request, 'home/home.html')
+        return render(request, 'home/home.html') 
